@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JTL-Archive Onboarding Mockup</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel standalone (zum Kompilieren von JSX im Browser) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-gray-100">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // React Hooks initialisieren
+        const { useState, useEffect } = React;
+        
+        // --- NATIVE LUCIDE ICONS (Bulletproof Standalone SVG Components) ---
+        const SVGIcon = ({ children, className = '' }) => (
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+            {children}
+          </svg>
+        );
+
+        const CheckCircle = (p) => <SVGIcon {...p}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></SVGIcon>;
+        const ShoppingCart = (p) => <SVGIcon {...p}><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></SVGIcon>;
+        const Globe = (p) => <SVGIcon {...p}><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></SVGIcon>;
+        const Mail = (p) => <SVGIcon {...p}><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></SVGIcon>;
+        const ExternalLink = (p) => <SVGIcon {...p}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></SVGIcon>;
+        const MoreHorizontal = (p) => <SVGIcon {...p}><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></SVGIcon>;
+        const Archive = (p) => <SVGIcon {...p}><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></SVGIcon>;
+        const ChevronLeft = (p) => <SVGIcon {...p}><polyline points="15 18 9 12 15 6"/></SVGIcon>;
+        const ChevronRight = (p) => <SVGIcon {...p}><polyline points="9 18 15 12 9 6"/></SVGIcon>;
+        const Search = (p) => <SVGIcon {...p}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></SVGIcon>;
+        const Check = (p) => <SVGIcon {...p}><polyline points="20 6 9 17 4 12"/></SVGIcon>;
+        const AlertCircle = (p) => <SVGIcon {...p}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></SVGIcon>;
+        const Shield = (p) => <SVGIcon {...p}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></SVGIcon>;
+        const LogOut = (p) => <SVGIcon {...p}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></SVGIcon>;
+        const Users = (p) => <SVGIcon {...p}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></SVGIcon>;
+        const UserPlus = (p) => <SVGIcon {...p}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></SVGIcon>;
+        const Trash2 = (p) => <SVGIcon {...p}><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></SVGIcon>;
+        const Info = (p) => <SVGIcon {...p}><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></SVGIcon>;
+        const FileText = (p) => <SVGIcon {...p}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></SVGIcon>;
+        const Filter = (p) => <SVGIcon {...p}><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></SVGIcon>;
+        const RefreshCw = (p) => <SVGIcon {...p}><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></SVGIcon>;
+        const ChevronDown = (p) => <SVGIcon {...p}><polyline points="6 9 12 15 18 9"/></SVGIcon>;
+        const Heart = (p) => <SVGIcon {...p}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></SVGIcon>;
+        const Paperclip = (p) => <SVGIcon {...p}><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></SVGIcon>;
+        const Grid = (p) => <SVGIcon {...p}><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></SVGIcon>;
+        const List = (p) => <SVGIcon {...p}><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></SVGIcon>;
+        const Folder = (p) => <SVGIcon {...p}><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-1.22-1.8A2 2 0 0 0 7.53 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></SVGIcon>;
+        const X = (p) => <SVGIcon {...p}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></SVGIcon>;
+        const MessageSquare = (p) => <SVGIcon {...p}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></SVGIcon>;
+        const MoreVertical = (p) => <SVGIcon {...p}><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></SVGIcon>;
+        const LayoutGrid = Grid;
+        
+        const Pause = (p) => <SVGIcon {...p}><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></SVGIcon>;
+        const Play = (p) => <SVGIcon {...p}><polygon points="5 3 19 12 5 21 5 3"/></SVGIcon>;
+        const Loader = (p) => <SVGIcon {...p}><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="4.93" x2="19.07" y2="7.76"/></SVGIcon>;
+        const CreditCard = (p) => <SVGIcon {...p}><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></SVGIcon>;
+
+        // Ausgelagerte Komponente für statisch sichtbare Architektur-Callouts unterhalb der App
+        const ArchCallout = ({ title, children }) => (
+          <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-5 flex gap-4 items-start w-full shadow-sm">
+            <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center shrink-0">
+              <Info className="w-5 h-5 text-indigo-600" />
+            </div>
+            <div>
+              <h4 className="font-bold text-indigo-900 text-sm mb-2">{title}</h4>
+              <div className="text-sm text-indigo-800 leading-relaxed space-y-3">
+                {children}
+              </div>
+            </div>
+          </div>
+        );
+
+        function App() {
+          // Views: 'overview_initial', 'wizard', 'overview_active', 'greyhound_app', 'license_management'
+          const [view, setView] = useState('overview_initial');
+          const [wizardStep, setWizardStep] = useState(1); // 1: Verbindung, 2: Tarif, 3: Einrichtung
+          
+          // Dev-Toggles
+          const [customerEdition, setCustomerEdition] = useState('enterprise'); // 'enterprise' or 'start'
+          const [isWawiConnected, setIsWawiConnected] = useState(true); // Step 1: Wawi connection
+          const [hasLicense, setHasLicense] = useState(true); // Step 5: License check
+          const [showLicenseError, setShowLicenseError] = useState(false);
+
+          // Consent Form State
+          const [consentBeta, setConsentBeta] = useState(false);
+          const [consentData, setConsentData] = useState(false);
+          const [consentBuy, setConsentBuy] = useState(false);
+
+          // Provisioning State
+          const [provisioningStep, setProvisioningStep] = useState(0);
+
+          // Reset states when starting wizard
+          const handleStartWizard = () => {
+            setView('wizard');
+            setWizardStep(1);
+            setConsentBeta(false);
+            setConsentData(false);
+            setConsentBuy(false);
+            setProvisioningStep(0);
+          };
+
+          // Simulate Provisioning Process when reaching Step 3
+          useEffect(() => {
+            if (view === 'wizard' && wizardStep === 3) {
+              setProvisioningStep(0);
+              const timers = [
+                setTimeout(() => setProvisioningStep(1), 2000), // ERP verbinden
+                setTimeout(() => setProvisioningStep(2), 4000), // Kontakte sync
+                setTimeout(() => setProvisioningStep(3), 6000), // Fertig
+              ];
+              return () => timers.forEach(clearTimeout);
+            }
+          }, [view, wizardStep]);
+
+          const canProceedConsent = () => {
+            if (customerEdition === 'enterprise') {
+              return consentBeta && consentData;
+            } else {
+              return consentBeta && consentData && consentBuy;
+            }
+          };
+
+          const handleStartApp = () => {
+            // Schritt 5: Lizenzprüfung findet beim Starten statt
+            if (hasLicense) {
+              setView('greyhound_app'); 
+            } else {
+              setShowLicenseError(true);
+            }
+          };
+
+          // --- UI Components ---
+
+          const DevBar = () => (
+            <div className="bg-slate-800 text-white text-xs p-3 flex flex-wrap gap-4 justify-between items-center mb-6 rounded-md shadow-sm">
+              <div className="flex items-center gap-6">
+                <div className="flex flex-col gap-1">
+                  <span className="text-[10px] text-slate-400 uppercase">Tarif (Schritt 2)</span>
+                  <div className="flex gap-3">
+                    <label className="flex items-center gap-1 cursor-pointer">
+                      <input type="radio" checked={customerEdition === 'enterprise'} onChange={() => setCustomerEdition('enterprise')} className="accent-blue-500" />
+                      Prof/Enterprise
+                    </label>
+                    <label className="flex items-center gap-1 cursor-pointer">
+                      <input type="radio" checked={customerEdition === 'start'} onChange={() => setCustomerEdition('start')} className="accent-blue-500" />
+                      Start/Advanced
+                    </label>
+                  </div>
+                </div>
+
+                <div className="w-px h-6 bg-slate-600"></div>
+
+                <div className="flex flex-col gap-1">
+                  <span className="text-[10px] text-slate-400 uppercase">Wawi verbunden? (Schritt 1)</span>
+                  <label className="flex items-center gap-1 cursor-pointer">
+                    <input type="checkbox" checked={isWawiConnected} onChange={(e) => setIsWawiConnected(e.target.checked)} className="accent-blue-500" />
+                    Verbunden
+                  </label>
+                </div>
+
+                <div className="w-px h-6 bg-slate-600"></div>
+
+                <div className="flex flex-col gap-1">
+                  <span className="text-[10px] text-slate-400 uppercase">Lizenz verfügbar? (Schritt 5)</span>
+                  <label className="flex items-center gap-1 cursor-pointer">
+                    <input type="checkbox" checked={hasLicense} onChange={(e) => setHasLicense(e.target.checked)} className="accent-blue-500" />
+                    Ja, Lizenz vorhanden
+                  </label>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => { setView('overview_initial'); setShowLicenseError(false); }}
+                className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 transition-colors rounded font-medium"
+              >
+                Simulation zurücksetzen
+              </button>
+            </div>
+          );
+
+          const AppOverviewCard = ({ isActive }) => (
+            <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
+              <div className="grid grid-cols-12 gap-4 px-6 py-3 border-b border-gray-200 text-sm font-medium text-gray-500">
+                <div className="col-span-4">Aktive Apps</div>
+                <div className="col-span-3">Entwickler</div>
+                <div className="col-span-2">Status</div>
+                <div className="col-span-3 text-right">Aktion</div>
+              </div>
+
+              <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-gray-200 items-center">
+                <div className="col-span-4 flex items-center gap-4">
+                  <button className="text-gray-400 hover:text-gray-600">
+                    <ChevronLeft className="w-5 h-5 -rotate-90" />
+                  </button>
+                  <div className="w-12 h-12 bg-black rounded-lg flex items-center justify-center text-white shadow-sm shrink-0">
+                    <Archive className="w-7 h-7" />
+                  </div>
+                  <div className="min-w-0">
+                    <h2 className="text-lg font-bold text-gray-900 truncate">JTL-Archive</h2>
+                    <div className="flex items-center text-sm text-gray-500 gap-1 mt-0.5">
+                      <ShoppingCart className="w-4 h-4 shrink-0" />
+                      Gekauft
+                    </div>
+                  </div>
+                </div>
+                <div className="col-span-3 text-sm text-gray-700">
+                  GREYHOUND Software<br/>GmbH
+                </div>
+                <div className="col-span-2">
+                  {isActive ? (
+                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
+                       <CheckCircle className="w-3.5 h-3.5" />
+                       Installiert
+                     </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200">
+                       Ausstehend
+                     </span>
+                  )}
+                </div>
+                <div className="col-span-3 flex justify-end items-center gap-3">
+                  {isActive ? (
+                    <button 
+                      onClick={handleStartApp}
+                      className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-900 hover:bg-gray-50 shadow-sm transition-all whitespace-nowrap"
+                    >
+                      <ExternalLink className="w-4 h-4 shrink-0" />
+                      JTL-Archive starten
+                    </button>
+                  ) : (
+                    <button className="p-2 text-gray-400 hover:text-gray-600 shrink-0">
+                      <MoreHorizontal className="w-5 h-5" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <div className="p-6 grid grid-cols-3 gap-8">
+                <div className="col-span-2 space-y-4">
+                  <div>
+                    <h3 className="text-sm font-bold text-gray-900 mb-3">Beschreibung</h3>
+                    <p className="text-sm text-gray-600 leading-relaxed mb-4">
+                      Mittels der Aktivierung dieser App werden Belege aus der Wawi heraus über die Cloud revisionssicher in das JTL-Archive archiviert. Damit erfüllen Sie die gesetzlichen Vorgaben zur Aufbewahrung von steuerrelevanten Dokumenten unkompliziert und vollautomatisch.
+                    </p>
+                  </div>
+
+                  {/* Prominenter Bereich für die Lizenzverwaltung */}
+                  {isActive && (
+                    <div className="p-5 bg-blue-50 border border-blue-100 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-4">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center shrink-0 text-blue-600">
+                          <CreditCard className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-bold text-blue-900">Verwaltung</h4>
+                          <p className="text-xs text-blue-800 mt-0.5">Lizenzen für das JTL-Archive steuern</p>
+                        </div>
+                      </div>
+                      <button 
+                        onClick={() => setView('license_management')}
+                        className="w-full sm:w-auto px-5 py-2.5 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 shadow-sm transition-colors whitespace-nowrap"
+                      >
+                        Lizenzverwaltung
+                      </button>
+                    </div>
+                  )}
+
+                  <div className="pt-4">
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-sm font-bold text-gray-900">Links & Informationen</h3>
+                    </div>
+                    <div className="space-y-4">
+                      <div>
+                        <div className="text-xs text-gray-500 mb-1">Website</div>
+                        <a href="#" className="text-blue-600 hover:underline text-sm flex items-center gap-2">
+                          <Globe className="w-4 h-4" /> https://v-198940156-3.greyhound.eu/unity
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {!isActive && (
+                <div className="border-t border-gray-200 p-4 bg-gray-50 flex justify-end rounded-b-lg">
+                  <button 
+                    onClick={handleStartWizard}
+                    className="px-6 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 shadow-sm transition-colors"
+                  >
+                    Einrichtung starten
+                  </button>
+                </div>
+              )}
+            </div>
+          );
+
+          // --- WIZARD COMPONENT ---
+          const Wizard = () => {
+            const steps = [
+              { id: 1, name: 'Verbindung prüfen' },
+              { id: 2, name: 'Tarif & Bedingungen' },
+              { id: 3, name: 'Einrichtung' }
+            ];
+
+            return (
+              <div className="bg-white border border-gray-200 rounded-lg shadow-lg flex min-h-[550px] overflow-hidden">
+                {/* Sidebar */}
+                <div className="w-1/3 bg-gray-50 border-r border-gray-200 p-6 flex flex-col">
+                  <div className="flex items-center gap-3 mb-10">
+                    <div className="w-8 h-8 bg-black rounded flex items-center justify-center text-white">
+                      <Archive className="w-5 h-5" />
+                    </div>
+                    <h2 className="font-bold text-gray-900 text-lg">JTL-Archive Setup</h2>
+                  </div>
+
+                  <div className="space-y-6">
+                    {steps.map((step) => (
+                      <div key={step.id} className="flex items-center gap-4">
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${
+                          wizardStep > step.id ? 'bg-green-500 text-white' : 
+                          wizardStep === step.id ? 'bg-blue-600 text-white' : 
+                          'bg-gray-200 text-gray-500'
+                        }`}>
+                          {wizardStep > step.id ? <Check className="w-4 h-4" /> : step.id}
+                        </div>
+                        <span className={`text-sm font-medium ${
+                          wizardStep === step.id ? 'text-gray-900' : 'text-gray-500'
+                        }`}>
+                          {step.name}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Content Area */}
+                <div className="w-2/3 p-8 flex flex-col relative">
+                  <button 
+                    onClick={() => setView('overview_initial')}
+                    className="absolute top-6 right-6 text-gray-400 hover:text-gray-600"
+                  >
+                    Abbrechen
+                  </button>
+
+                  {/* STEP 1: Verbindung prüfen */}
+                  {wizardStep === 1 && (
+                    <div className="flex flex-col h-full mt-4">
+                      <h3 className="text-xl font-bold text-gray-900 mb-6">Prüfung der Wawi-Verbindung</h3>
+                      <p className="text-sm text-gray-600 mb-8 leading-relaxed">
+                        Damit das JTL-Archive eingerichtet werden kann, prüfen wir zunächst, ob Ihre Wawi bereits mit der Cloud-Plattform verbunden und die Cloud-ID mit Ihrem Kundencenter gekoppelt ist.
+                      </p>
+
+                      <div className={`p-6 border rounded-lg flex items-start gap-4 ${isWawiConnected ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200'}`}>
+                        {isWawiConnected ? (
+                          <>
+                            <CheckCircle className="w-6 h-6 text-green-600 mt-0.5" />
+                            <div>
+                              <h4 className="font-bold text-green-900 text-sm mb-1">Verbindung erfolgreich hergestellt</h4>
+                              <p className="text-sm text-green-800">Ihre Organisation ist bereits mit dem Kunden-Account verbunden. Sie können mit dem nächsten Schritt fortfahren.</p>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <AlertCircle className="w-6 h-6 text-yellow-600 mt-0.5" />
+                            <div>
+                              <h4 className="font-bold text-yellow-900 text-sm mb-1">Verbindung fehlt</h4>
+                              <p className="text-sm text-yellow-800 mb-4">Ihr Kunden-Account ist noch nicht mit der Plattform verbunden. Bitte verbinden Sie sich einmalig.</p>
+                              <button 
+                                onClick={() => setIsWawiConnected(true)}
+                                className="px-4 py-2 bg-yellow-600 text-white text-sm font-medium rounded shadow-sm hover:bg-yellow-700 transition-colors"
+                              >
+                                Jetzt verbinden (Simulation)
+                              </button>
+                            </div>
+                          </>
+                        )}
+                      </div>
+
+                      <div className="mt-auto flex justify-end">
+                        <button 
+                          onClick={() => setWizardStep(2)}
+                          disabled={!isWawiConnected}
+                          className={`px-6 py-2 rounded-md text-sm font-medium transition-colors ${
+                            isWawiConnected 
+                              ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                              : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                          }`}
+                        >
+                          Weiter
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* STEP 2: Tarif & Bedingungen */}
+                  {wizardStep === 2 && (
+                    <div className="flex flex-col h-full mt-4">
+                      <h3 className="text-xl font-bold text-gray-900 mb-6">Tarif & Zustimmung</h3>
+                      
+                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-5 mb-8">
+                        {customerEdition === 'enterprise' ? (
+                          <p className="text-sm text-gray-700 leading-relaxed">
+                            In ihrem Paket <strong>(Professional / Enterprise)</strong> ist das JTL-Archive bereits <span className="text-green-600 font-bold">kostenlos enthalten</span>.
+                          </p>
+                        ) : (
+                          <p className="text-sm text-gray-700 leading-relaxed">
+                            In dem Paket <strong>(Start / Advanced)</strong> ist der erste Nutzer bereits kostenlos enthalten und das JTL Archive kostet <span className="font-bold">39,00€ / Monat</span>.
+                          </p>
+                        )}
+                      </div>
+
+                      <p className="text-sm font-medium text-gray-900 mb-4">Bitte stimmen Sie den Bedingungen zu, um fortzufahren:</p>
+
+                      <div className="space-y-3 mb-8">
+                        <label className="flex items-start gap-4 p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                          <input 
+                            type="checkbox" 
+                            checked={consentBeta}
+                            onChange={(e) => setConsentBeta(e.target.checked)}
+                            className="mt-0.5 w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
+                          />
+                          <span className="text-sm text-gray-800 pt-0.5">Ich stimme dem Beta Programm zu.</span>
+                        </label>
+                        
+                        <label className="flex items-start gap-4 p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                          <input 
+                            type="checkbox" 
+                            checked={consentData}
+                            onChange={(e) => setConsentData(e.target.checked)}
+                            className="mt-0.5 w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
+                          />
+                          <span className="text-sm text-gray-800 pt-0.5">Ich stimme der Datenverarbeitung zu.</span>
+                        </label>
+                        
+                        {customerEdition === 'start' && (
+                          <label className="flex items-start gap-4 p-4 border border-blue-200 bg-blue-50/50 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors">
+                            <input 
+                              type="checkbox" 
+                              checked={consentBuy}
+                              onChange={(e) => setConsentBuy(e.target.checked)}
+                              className="mt-0.5 w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
+                            />
+                            <span className="text-sm text-gray-900 font-medium pt-0.5">Ich buche das JTL Archive für 39,00€ inkl. einem Nutzer.</span>
+                          </label>
+                        )}
+                      </div>
+
+                      <div className="mt-auto flex justify-between items-center">
+                        <button 
+                          onClick={() => setWizardStep(1)}
+                          className="px-6 py-2 text-gray-600 hover:text-gray-900 text-sm font-medium"
+                        >
+                          Zurück
+                        </button>
+                        <button 
+                          onClick={() => setWizardStep(3)}
+                          disabled={!canProceedConsent()}
+                          className={`px-8 py-2.5 rounded-md text-sm font-bold transition-all shadow-sm ${
+                            canProceedConsent() 
+                              ? 'bg-black text-white hover:bg-gray-800 scale-100' 
+                              : 'bg-gray-200 text-gray-400 cursor-not-allowed scale-95'
+                          }`}
+                        >
+                          {customerEdition === 'enterprise' ? 'JTL Archive aktivieren' : 'JTL Archive kostenpflichtig buchen'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* STEP 3: Einrichtung */}
+                  {wizardStep === 3 && (
+                    <div className="flex flex-col h-full mt-4 justify-center">
+                      {provisioningStep < 3 ? (
+                        <div className="text-center max-w-sm mx-auto">
+                          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                             <Archive className="w-8 h-8 text-black animate-pulse" />
+                          </div>
+                          <h3 className="text-xl font-bold text-gray-900 mb-2">Ihr JTL Archive wird eingerichtet</h3>
+                          <p className="text-sm text-gray-500 mb-8 leading-relaxed">
+                            Dies kann einige Minuten dauern. Sie können das Fenster schließen oder abwarten.
+                          </p>
+                          
+                          <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4 overflow-hidden">
+                            <div 
+                              className="bg-black h-2.5 rounded-full transition-all duration-1000 ease-out"
+                              style={{ width: `${(provisioningStep + 1) * 33}%` }}
+                            ></div>
+                          </div>
+
+                          <p className="text-sm font-medium text-gray-700 animate-pulse">
+                            {provisioningStep === 0 && "Der Server wird hochgefahren und installiert..."}
+                            {provisioningStep === 1 && "Das ERP System wird verbunden..."}
+                            {provisioningStep === 2 && "Die Kontakte werden synchronisiert..."}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="text-center max-w-sm mx-auto">
+                          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                             <Check className="w-8 h-8 text-green-600" />
+                          </div>
+                          <h3 className="text-xl font-bold text-gray-900 mb-2">Einrichtung abgeschlossen!</h3>
+                          <p className="text-sm text-gray-500 mb-10 leading-relaxed">
+                            Ihr JTL Archive wurde erfolgreich provisioniert und mit Ihrer Cloud-ID verknüpft. Sie können die App nun öffnen.
+                          </p>
+
+                          <button 
+                            onClick={() => setView('overview_active')}
+                            className="w-full px-6 py-3 bg-black text-white text-sm font-bold rounded-md hover:bg-gray-800 shadow-md transition-all"
+                          >
+                            Zurück zur Übersicht
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          };
+
+          // --- GREYHOUND APP MOCKUP (Authentischer Nachbau aus Screenshot) ---
+          const GreyhoundAppView = () => (
+            <div className="w-full h-[85vh] bg-white rounded-xl shadow-2xl border border-gray-300 flex overflow-hidden font-sans text-sm text-gray-800">
+              
+              {/* Column 1: Dark Navigation (Far Left) */}
+              <div className="w-[50px] bg-[#1a1e23] flex flex-col items-center py-4 border-r border-[#2a2e33] shrink-0 z-20">
+                <div 
+                  onClick={() => setView('overview_active')}
+                  title="Zurück zur Plattform"
+                  className="w-8 h-8 bg-black border border-gray-700 rounded flex items-center justify-center font-bold text-white text-xs mb-6 cursor-pointer hover:bg-gray-800 transition-colors"
+                >
+                  JTL
+                </div>
+                <div className="flex flex-col gap-6 text-gray-400">
+                  <Filter className="w-5 h-5 hover:text-white cursor-pointer" />
+                  <Archive className="w-5 h-5 hover:text-white cursor-pointer" />
+                </div>
+                <div className="mt-auto flex flex-col items-center gap-4">
+                  <div className="w-3 h-3 bg-green-500 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.6)]"></div>
+                  <Info className="w-5 h-5 text-gray-400 hover:text-white cursor-pointer" />
+                </div>
+              </div>
+
+              {/* Column 2: Filter Sidebar */}
+              <div className="w-[260px] bg-[#f8f9fa] border-r border-gray-200 flex flex-col shrink-0">
+                <div className="h-14 px-4 flex items-center justify-between border-b border-gray-200">
+                  <h2 className="font-bold text-gray-900 text-base">Filter</h2>
+                  <RefreshCw className="w-4 h-4 text-gray-500 cursor-pointer" />
+                </div>
+                
+                <div className="p-3 overflow-y-auto">
+                  <div className="relative mb-4">
+                    <input type="text" placeholder="FILTER" className="w-full text-xs bg-transparent border-none placeholder-gray-400 focus:ring-0 px-1 uppercase tracking-wider" readOnly />
+                  </div>
+                  
+                  <div className="space-y-1">
+                    <div className="px-2 py-1.5 text-gray-700 hover:bg-gray-200 rounded cursor-pointer">Alle</div>
+                    
+                    {/* Active Item: Dokumente */}
+                    <div className="bg-gray-200 border-l-4 border-red-500 px-2 py-1.5 flex items-center gap-2 cursor-pointer font-medium text-gray-900 shadow-sm">
+                      <ChevronDown className="w-4 h-4 text-gray-600" />
+                      <Archive className="w-4 h-4 text-red-500" />
+                      Dokumente
+                    </div>
+
+                    {/* Sub-Tree */}
+                    <div className="pl-6 mt-1 space-y-1">
+                      <div className="flex items-center gap-2 px-2 py-1.5 hover:bg-gray-200 rounded cursor-pointer text-gray-700">
+                        <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
+                        <Folder className="w-4 h-4 text-gray-400" />
+                        Verkauf
+                      </div>
+                      <div className="pl-6 space-y-1">
+                        <div className="flex items-center gap-2 px-2 py-1 text-gray-600 hover:bg-gray-200 rounded cursor-pointer">
+                          <FileText className="w-4 h-4 text-gray-400" /> Angebote
+                        </div>
+                        <div className="flex items-center gap-2 px-2 py-1 text-gray-600 hover:bg-gray-200 rounded cursor-pointer">
+                          <FileText className="w-4 h-4 text-gray-400" /> Aufträge
+                        </div>
+                        <div className="flex items-center gap-2 px-2 py-1 text-gray-600 hover:bg-gray-200 rounded cursor-pointer">
+                          <FileText className="w-4 h-4 text-gray-400" /> Auftragsbestätigungen
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 px-2 py-1.5 hover:bg-gray-200 rounded cursor-pointer text-gray-700">
+                        <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
+                        <Folder className="w-4 h-4 text-green-600" />
+                        Versand
+                      </div>
+
+                      <div className="flex items-center gap-2 px-2 py-1.5 hover:bg-gray-200 rounded cursor-pointer text-gray-700">
+                        <ChevronDown className="w-3.5 h-3.5 text-gray-600" />
+                        <Folder className="w-4 h-4 text-gray-400" />
+                        Faktura
+                      </div>
+                      <div className="pl-6 space-y-1">
+                        <div className="flex items-center gap-2 px-2 py-1 text-gray-600 hover:bg-gray-200 rounded cursor-pointer">
+                          <FileText className="w-4 h-4 text-yellow-500" /> Rechnungen
+                        </div>
+                        <div className="flex items-center gap-2 px-2 py-1 text-gray-600 hover:bg-gray-200 rounded cursor-pointer">
+                          <FileText className="w-4 h-4 text-gray-400" /> Gutschriften
+                        </div>
+                        <div className="flex items-center gap-2 px-2 py-1 text-gray-600 hover:bg-gray-200 rounded cursor-pointer">
+                          <FileText className="w-4 h-4 text-gray-400" /> Rechnungskorrekturen
+                        </div>
+                        <div className="flex items-center gap-2 px-2 py-1 text-gray-600 hover:bg-gray-200 rounded cursor-pointer">
+                          <FileText className="w-4 h-4 text-gray-400" /> Stornobelege
+                        </div>
+                        <div className="flex items-center gap-2 px-2 py-1 text-gray-600 hover:bg-gray-200 rounded cursor-pointer">
+                          <FileText className="w-4 h-4 text-gray-400" /> Mahnungen
+                        </div>
+                        <div className="flex items-center gap-2 px-2 py-1 text-gray-600 hover:bg-gray-200 rounded cursor-pointer">
+                          <FileText className="w-4 h-4 text-gray-400" /> Avis
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-2 px-2 py-1.5 hover:bg-gray-200 rounded cursor-pointer text-gray-700">
+                        <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
+                        <Folder className="w-4 h-4 text-gray-400" /> Einkauf
+                      </div>
+                      <div className="flex items-center gap-2 px-2 py-1.5 hover:bg-gray-200 rounded cursor-pointer text-gray-700">
+                        <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
+                        <Folder className="w-4 h-4 text-gray-400" /> Kasse
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Column 3: Document List */}
+              <div className="w-[320px] bg-[#f4f5f7] border-r border-gray-200 flex flex-col shrink-0 relative">
+                <div className="h-14 px-4 flex items-center gap-3 border-b border-gray-200 bg-white shadow-sm z-10">
+                  <div className="w-6 h-6 bg-gray-200 rounded flex items-center justify-center">
+                     <Archive className="w-4 h-4 text-gray-600" />
+                  </div>
+                  <h2 className="font-bold text-gray-900">Dokumente</h2>
+                  <div className="ml-auto flex items-center gap-2 text-gray-500">
+                    <Users className="w-4 h-4 cursor-pointer hover:text-gray-900" />
+                    <RefreshCw className="w-4 h-4 cursor-pointer hover:text-gray-900" />
+                    <Filter className="w-4 h-4 cursor-pointer hover:text-gray-900" />
+                  </div>
+                </div>
+
+                <div className="p-3 overflow-y-auto">
+                  {/* Search Bar */}
+                  <div className="bg-white border border-gray-200 rounded-full px-3 py-1.5 flex items-center gap-2 mb-4 shadow-sm">
+                    <Search className="w-4 h-4 text-gray-400" />
+                    <input type="text" className="flex-1 border-none focus:ring-0 text-sm outline-none" />
+                    <X className="w-4 h-4 text-gray-400 cursor-pointer" />
+                    <Heart className="w-4 h-4 text-gray-400 cursor-pointer" />
+                  </div>
+
+                  <div className="text-xs font-bold text-gray-900 mb-3 px-1">Februar 2026</div>
+
+                  {/* Cards */}
+                  <div className="space-y-2">
+                    
+                    {/* Active Card */}
+                    <div className="bg-[#eaf3ff] border border-blue-300 rounded-lg p-3 shadow-sm relative">
+                      <div className="flex justify-between items-start mb-1">
+                        <span className="font-bold text-gray-900 text-xs">
+                          Admin
+                        </span>
+                        <span className="text-gray-500 text-xs">vor 32 Minuten</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <div className="w-5 h-5 bg-white border border-gray-200 rounded shrink-0 flex items-center justify-center mt-0.5">
+                          <ChevronLeft className="w-3 h-3 text-gray-400" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-medium text-gray-800 truncate">RE202602121-17...</div>
+                          <div className="flex items-center gap-3 mt-2 text-gray-500">
+                            <div className="flex items-center gap-1 text-xs bg-white px-1.5 py-0.5 rounded border border-gray-200">
+                              <FileText className="w-3 h-3" /> Alle Mitarbeiter
+                            </div>
+                            <div className="flex gap-1.5 ml-auto">
+                              <MessageSquare className="w-3.5 h-3.5" />
+                              <Users className="w-3.5 h-3.5" />
+                              <MoreVertical className="w-3.5 h-3.5" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Inactive Card 1 */}
+                    <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm hover:border-gray-300 cursor-pointer">
+                      <div className="flex justify-between items-start mb-1">
+                        <span className="font-bold text-gray-900 text-xs">Admin</span>
+                        <span className="text-gray-500 text-xs">vor 32 Minuten</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <div className="w-5 h-5 bg-gray-50 border border-gray-200 rounded shrink-0 flex items-center justify-center mt-0.5">
+                          <ChevronLeft className="w-3 h-3 text-gray-400" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-medium text-blue-600 truncate">AU202602216-17.0...</div>
+                          <div className="flex items-center gap-3 mt-2 text-gray-500">
+                            <div className="flex items-center gap-1 text-xs bg-gray-50 px-1.5 py-0.5 rounded border border-gray-200">
+                              <FileText className="w-3 h-3" /> Alle Mitarbeiter
+                            </div>
+                            <div className="flex gap-1.5 ml-auto">
+                              <MessageSquare className="w-3.5 h-3.5" />
+                              <Users className="w-3.5 h-3.5" />
+                              <MoreVertical className="w-3.5 h-3.5" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Inactive Card 2 */}
+                    <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm hover:border-gray-300 cursor-pointer">
+                      <div className="flex justify-between items-start mb-1">
+                        <span className="font-bold text-gray-900 text-xs">Admin</span>
+                        <span className="text-gray-500 text-xs">15:05</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <div className="w-5 h-5 bg-gray-50 border border-gray-200 rounded shrink-0 flex items-center justify-center mt-0.5">
+                          <ChevronLeft className="w-3 h-3 text-gray-400" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-medium text-gray-800 truncate">AU202602215-17.02.2026</div>
+                          <div className="flex items-center gap-3 mt-2 text-gray-500">
+                            <div className="flex items-center gap-1 text-xs bg-gray-50 px-1.5 py-0.5 rounded border border-gray-200">
+                              <FileText className="w-3 h-3" /> Alle Mitarbeiter
+                            </div>
+                            <div className="flex gap-1.5 ml-auto">
+                              <MessageSquare className="w-3.5 h-3.5" />
+                              <Users className="w-3.5 h-3.5" />
+                              <MoreVertical className="w-3.5 h-3.5" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+              {/* Column 4: Document Preview Area */}
+              <div className="flex-1 bg-[#f0f2f5] flex flex-col relative overflow-hidden">
+                
+                {/* Top Meta Bar */}
+                <div className="h-14 bg-[#f8f9fa] border-b border-gray-200 px-6 flex items-center justify-between shrink-0 shadow-sm z-10">
+                  <div className="flex items-center gap-4">
+                    <div className="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 shrink-0">
+                      <ChevronLeft className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-gray-900 text-sm flex items-center gap-2">
+                        Admin
+                      </div>
+                      <div className="text-gray-600 text-xs truncate max-w-xl">
+                        RE202602121-17.02.2026 [T-898FF3F33C-91] <br/>
+                        <span className="text-gray-500">An: c.fuchs@jtl-beispiel.de, Industriestraße 42, 66129 Saarbrücken, DE</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Navigation/Close für den Prototyp */}
+                  <button 
+                    onClick={() => setView('overview_active')}
+                    className="flex items-center gap-2 px-4 py-1.5 bg-white border border-gray-300 rounded text-sm font-medium text-gray-700 hover:bg-gray-50 shadow-sm transition-all"
+                  >
+                    Zurück zur Plattform
+                  </button>
+                </div>
+
+                {/* The Document (PDF Mockup) */}
+                <div className="flex-1 overflow-auto p-8 flex flex-col items-center">
+                  
+                  <div className="w-[700px] bg-white shadow-lg border border-gray-200 p-12 relative shrink-0 mt-2" style={{ minHeight: '990px' }}>
+                    {/* Document Content simulating the screenshot invoice */}
+                    <div className="text-[10px] text-gray-800 font-serif leading-relaxed">
+                      <div className="text-xs mb-8 border-b border-gray-400 inline-block pb-0.5 text-gray-500">
+                        Sportbedarf Sommer GmbH, Sonnenstraße 12A, 50354 Hürth
+                      </div>
+                      
+                      <div className="flex justify-between mb-16">
+                        <div>
+                          Frau Christina Fuchs<br/>
+                          Industriestraße 42<br/>
+                          66129 Saarbrücken<br/>
+                          Deutschland
+                        </div>
+                        <div className="text-right">
+                          <strong>Sportbedarf Sommer GmbH</strong><br/>
+                          Christian Sommer<br/>
+                          Sonnenstraße 12A<br/>
+                          50354 Hürth<br/>
+                          Tel: 02233/61414250<br/>
+                          Fax: 02233/61414251<br/>
+                          Web: http://www.sportbedarf-sommer.de<br/>
+                          E-Mail: info@sportbedarf-sommer.de<br/><br/>
+                          Bearbeiter: Admin
+                        </div>
+                      </div>
+
+                      <h1 className="text-lg font-bold text-center mb-8 tracking-widest uppercase">Rechnung</h1>
+
+                      <div className="flex justify-between mb-4 border-b border-gray-400 pb-2">
+                        <div>
+                          Seite: 1<br/>
+                          Rechnungsnr: RE202602121 bzgl. Auftragsnummer: <br/>
+                          Kundennummer: KU20185419
+                        </div>
+                        <div className="text-right">
+                          17.02.2026
+                        </div>
+                      </div>
+
+                      <table className="w-full text-left mb-8 border-b border-gray-400 pb-4">
+                        <thead>
+                          <tr className="border-b border-gray-300">
+                            <th className="pb-1 w-8">Pos</th>
+                            <th className="pb-1 w-16">Menge</th>
+                            <th className="pb-1 w-24">Artikel</th>
+                            <th className="pb-1">Bezeichnung</th>
+                            <th className="pb-1 text-right w-12">USt</th>
+                            <th className="pb-1 text-right w-20">E-Preis</th>
+                            <th className="pb-1 text-right w-16">Rabatt</th>
+                            <th className="pb-1 text-right w-20">G-Preis</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td className="py-1">1</td>
+                            <td className="py-1">1</td>
+                            <td className="py-1">ART20183490-1</td>
+                            <td className="py-1">Damen-Schlittschuhe (S/40)</td>
+                            <td className="py-1 text-right">19%</td>
+                            <td className="py-1 text-right">75,62</td>
+                            <td className="py-1 text-right">10 %</td>
+                            <td className="py-1 text-right">68,06</td>
+                          </tr>
+                          <tr>
+                            <td className="py-1">2</td>
+                            <td className="py-1">1</td>
+                            <td className="py-1"></td>
+                            <td className="py-1">DHL-Paket (bis 5 kg)</td>
+                            <td className="py-1 text-right">19%</td>
+                            <td className="py-1 text-right">5,03</td>
+                            <td className="py-1 text-right"></td>
+                            <td className="py-1 text-right">5,03</td>
+                          </tr>
+                        </tbody>
+                      </table>
+
+                      <div className="w-1/2 ml-auto mb-12">
+                        <div className="flex justify-between mb-1">
+                          <span>Gesamt Netto (19,00%)</span>
+                          <span>73,09 EUR</span>
+                        </div>
+                        <div className="flex justify-between mb-1">
+                          <span>zzgl. 19,00% MwSt.</span>
+                          <span>13,89 EUR</span>
+                        </div>
+                        <div className="flex justify-between font-bold border-t border-gray-400 pt-1 mt-1 text-xs">
+                          <span>Gesamtbetrag</span>
+                          <span>86,98 EUR</span>
+                        </div>
+                      </div>
+
+                      <div>
+                        Das Zahlungsziel beträgt 14 Tage.<br/>
+                        DHL 5<br/>
+                        Vielen Dank für Ihren Auftrag.<br/>
+                        Als Profisportler bezahlen Sie bei uns 10 % weniger als andere Kunden.
+                      </div>
+
+                      <div className="absolute bottom-12 left-12 right-12 border-t border-gray-400 pt-4 flex justify-between text-[8px] text-gray-500 text-center">
+                        <span>Bankverbindung: Hürther Bank</span>
+                        <span>IBAN: DE12123122123122123123</span>
+                        <span>BIC: HUEBAUBA</span>
+                        <span>USt-ID: 123/123/12312</span>
+                        <span>Gläubiger-ID: ...</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Column 5: Right Toolbar */}
+              <div className="w-[48px] bg-white border-l border-gray-200 flex flex-col items-center py-4 gap-6 shrink-0 z-20 shadow-[-2px_0_5px_rgba(0,0,0,0.02)]">
+                <LayoutGrid className="w-5 h-5 text-gray-400 cursor-pointer hover:text-gray-900" />
+                <List className="w-5 h-5 text-gray-900 cursor-pointer" />
+                <Paperclip className="w-5 h-5 text-gray-400 cursor-pointer hover:text-gray-900" />
+              </div>
+
+            </div>
+          );
+
+          // --- LIZENZVERWALTUNG (Schritt 4) ---
+          const LicenseManagementView = () => {
+            return (
+              <div className="bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col min-h-[600px]">
+                
+                {/* Header */}
+                <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-gray-50 rounded-t-lg">
+                  <div className="flex items-center gap-4">
+                    <button 
+                      onClick={() => setView('overview_active')}
+                      className="text-gray-500 hover:text-gray-900 transition-colors flex items-center gap-1 text-sm font-medium"
+                    >
+                      <ChevronLeft className="w-4 h-4" /> Zurück zur Übersicht
+                    </button>
+                    <div className="w-px h-6 bg-gray-300"></div>
+                    <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                      <CreditCard className="w-5 h-5 text-blue-600" />
+                      Lizenzverwaltung
+                    </h2>
+                  </div>
+                  <button className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 shadow-sm transition-colors">
+                    Lizenzen nachbuchen
+                  </button>
+                </div>
+
+                {/* Info Banner */}
+                <div className="p-6 pb-2 border-b border-gray-100">
+                  <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 flex gap-4 items-start w-full">
+                    <Info className="w-5 h-5 text-blue-600 mt-0.5 shrink-0" />
+                    <div>
+                      <h4 className="font-bold text-blue-900 text-sm mb-1">Zentrale Benutzerverwaltung</h4>
+                      <p className="text-sm text-blue-800 leading-relaxed">
+                        Die Verwaltung von Benutzern und deren Zugriffen erfolgt zentral über die JTL Cloud. An dieser Stelle behalten Sie lediglich den Überblick über Ihr gebuchtes Kontingent an JTL-Archive Lizenzen. Es werden keine GREYHOUND User angelegt oder über das Archiv lizenziert. JTL Cloud fungiert als Identity Provider (IDP). Die Prüfung erfolgt lediglich auf das vorhandene Kontingent beim Starten der App.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Main Content: Just the License Stats Overview */}
+                <div className="p-6 flex-1 bg-gray-50 flex flex-col items-center justify-start">
+                  
+                  <div className="w-full max-w-md bg-white rounded-xl p-8 border border-gray-200 shadow-sm mt-8">
+                    <h3 className="text-lg font-bold text-gray-900 mb-8 text-center">Ihre Lizenz-Übersicht</h3>
+                    <div className="space-y-8">
+                      <div>
+                        <div className="text-sm text-gray-500 mb-1">Aktueller Tarif</div>
+                        <div className="text-xl font-medium text-gray-900">
+                          {customerEdition === 'enterprise' ? 'Professional / Enterprise' : 'Start / Advanced'}
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <div className="flex justify-between items-end mb-3">
+                          <div className="text-sm text-gray-500">Belegte Lizenzen</div>
+                          
+                          <div className="text-2xl font-bold text-gray-900">
+                            2 <span className="text-gray-400 text-lg">/ {customerEdition === 'enterprise' ? '∞' : '3'}</span>
+                          </div>
+                        </div>
+                        
+                        <div className="w-full bg-gray-100 rounded-full h-4 overflow-hidden">
+                          <div 
+                            className="bg-blue-600 h-4 transition-all duration-500" 
+                            style={{ width: customerEdition === 'enterprise' ? '15%' : '66%' }}
+                          ></div>
+                        </div>
+                        
+                        <p className="text-sm text-gray-500 mt-4 leading-relaxed">
+                          {customerEdition === 'enterprise' 
+                            ? 'In Ihrem Tarif sind unbegrenzt viele Lizenzen für Ihre Organisation enthalten.' 
+                            : 'Sie haben derzeit 2 von 3 verfügbaren Lizenzen an Mitarbeiter in der JTL Cloud zugewiesen.'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          };
+
+          return (
+            <div className="min-h-screen bg-gray-100 p-8 font-sans text-gray-900 flex flex-col">
+              
+              {/* App Area */}
+              <div className={`w-full mx-auto transition-all duration-300 ${view === 'greyhound_app' ? 'max-w-[1400px]' : 'max-w-5xl'}`}>
+                <DevBar />
+
+                {view === 'overview_initial' && <AppOverviewCard isActive={false} />}
+                {view === 'overview_active' && <AppOverviewCard isActive={true} />}
+                {view === 'wizard' && <Wizard />}
+                {view === 'greyhound_app' && <GreyhoundAppView />}
+                {view === 'license_management' && <LicenseManagementView />}
+              </div>
+
+              {/* Zusatzhinweise / Callouts (ausgelagert unter die App) */}
+              {(view === 'overview_active' || view === 'greyhound_app' || view === 'license_management') && (
+                <div className={`w-full mx-auto mt-16 pt-8 border-t border-gray-300 ${view === 'greyhound_app' ? 'max-w-[1400px]' : 'max-w-5xl'}`}>
+                  <h3 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-6">Architektur-Notizen & Zusatzhinweise für Screenshots</h3>
+                  
+                  {view === 'overview_active' && (
+                    <ArchCallout title="Sichtbarkeit vs. Zugriff & Technischer Nutzer">
+                      <p><strong>1. Sichtbarkeit vs. Zugriff (Lizenz-Prüfung):</strong> Das JTL-Archive ist als App für jeden Benutzer innerhalb der JTL-Organisation sichtbar. Der eigentliche Zugriff (Klick auf "JTL-Archive starten") öffnet technisch bedingt direkt das JTL-Archive. Dort wird dann geprüft, ob noch eine Lizenz frei ist (diese Technik existiert bereits). Schlägt die Prüfung fehl, greift der definierte Fehler-Dialog ("Keine Lizenzen verfügbar").</p>
+                      <p className="mt-2"><strong>2. Der technische "Admin"-Nutzer:</strong> GREYHOUND benötigt für die API-Kommunikation und die Dokumentenanlage einen technischen Kontext. Hierfür wird nicht für jeden JTL-User ein neuer GREYHOUND-User generiert. Stattdessen wird der bestehende, technische Admin-User (oder ein spezifischer System-User) für alle Anlage-Operationen genutzt.</p>
+                    </ArchCallout>
+                  )}
+
+                  {view === 'greyhound_app' && (
+                    <ArchCallout title="Beleg-Autoren & UserFields">
+                      <p>Für die technische Anlage der Belege im JTL-Archive (GREYHOUND) wird systemseitig der 'Admin'-Nutzer verwendet, um Overhead durch redundante User-Accounts zu vermeiden. Die fachliche Identität und Berechtigungssteuerung läuft allein über die JTL Cloud als Identity Provider (IDP). Die Information, wer den Beleg aus der Wawi erzeugt hat, steht für Audits und Filterung im 'UserField: Autor'.</p>
+                    </ArchCallout>
+                  )}
+
+                  {view === 'license_management' && (
+                    <ArchCallout title="Anzeige der Lizenz-Kontingente (Zielbild)">
+                      <p>Laut Marc Völker und Robin-Manuel ist es derzeit technisch noch nicht möglich, die genaue Anzahl der gebuchten Lizenzen aus dem Kundencenter (KC) in die JTL-Cloud durchzureichen und hier in der App anzuzeigen. Die obige Darstellung dient daher als Mockup für den gewünschten Zielzustand.</p>
+                    </ArchCallout>
+                  )}
+                </div>
+              )}
+
+              {/* Modal Overlay for License Error (Schritt 5) */}
+              {showLicenseError && (
+                <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-[60]">
+                  <div className="bg-white rounded-xl w-full max-w-md p-8 shadow-2xl relative">
+                    <div className="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center mb-6">
+                      <AlertCircle className="w-6 h-6" />
+                    </div>
+                    
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">Keine Lizenzen verfügbar</h3>
+                    
+                    <p className="text-sm text-gray-600 leading-relaxed mb-8">
+                      Ihre JTL Archive Lizenzen sind vollständig belegt. Bitte wenden Sie sich an Ihren Administrator oder gehen Sie in das Kundencenter, um weitere Lizenzen nachzubuchen.<br/><br/>
+                      <strong>Kontakt:</strong> Org@verwalter.de
+                    </p>
+                    
+                    <div className="flex gap-3">
+                      <button 
+                        onClick={() => setShowLicenseError(false)}
+                        className="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors"
+                      >
+                        Schließen
+                      </button>
+                      <button 
+                        onClick={() => {
+                          setShowLicenseError(false);
+                          setView('license_management');
+                        }}
+                        className="flex-1 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                      >
+                        Lizenzen verwalten
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        }
+
+        // App in den DOM rendern
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
