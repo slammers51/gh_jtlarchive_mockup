@@ -261,29 +261,13 @@
                 </div>
                 <div className="col-span-3 flex justify-end items-center gap-3">
                   {isActive ? (
-                    <PmTooltip 
-                      position="left" 
-                      text={
-                        <div className="space-y-3 flex flex-col text-left">
-                          <div>
-                            <strong className="block mb-1 text-indigo-200 text-[11px]">1. Sichtbarkeit vs. Zugriff (Lizenz-Prüfung):</strong>
-                            Das JTL-Archive ist als App für jeden Benutzer innerhalb der JTL-Organisation sichtbar. Der eigentliche Zugriff (Klick auf "JTL-Archive starten") öffnet technisch bedingt direkt das JTL-Archive. Dort wird dann geprüft, ob noch eine Lizenz frei ist (diese Technik existiert bereits). Schlägt die Prüfung fehl, greift der definierte Fehler-Dialog ("Keine Lizenzen verfügbar").
-                          </div>
-                          <div>
-                            <strong className="block mb-1 text-indigo-200 text-[11px]">2. Implizite Benutzeranlage & SSO:</strong>
-                            Entgegen früherer Annahmen wird kein generischer "Admin"-Nutzer verwendet. Ziel ist ein echtes Single Sign-On: Der JTL Cloud-Benutzer wird beim Klick auf Starten implizit im GREYHOUND-System angelegt und direkt angemeldet, sofern eine Lizenz verfügbar ist.
-                          </div>
-                        </div>
-                      }
+                    <button 
+                      onClick={handleStartApp}
+                      className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-900 hover:bg-gray-50 shadow-sm transition-all whitespace-nowrap"
                     >
-                      <button 
-                        onClick={handleStartApp}
-                        className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-900 hover:bg-gray-50 shadow-sm transition-all whitespace-nowrap"
-                      >
-                        <ExternalLink className="w-4 h-4 shrink-0" />
-                        JTL-Archive starten
-                      </button>
-                    </PmTooltip>
+                      <ExternalLink className="w-4 h-4 shrink-0" />
+                      JTL-Archive starten
+                    </button>
                   ) : (
                     <button className="p-2 text-gray-400 hover:text-gray-600 shrink-0">
                       <MoreHorizontal className="w-5 h-5" />
@@ -717,7 +701,7 @@
                       <div className="flex justify-between items-start mb-1">
                         <span className="font-bold text-gray-900 text-xs">
                           {/* Tooltip für die individuelle Benutzeranlage */}
-                          <PmTooltip position="right" text="Architektur-Notiz: Die JTL Cloud fungiert als Identity Provider (IDP). Die Beleg-Autoren sind nun die echten, implizit via SSO angelegten Nutzer in GREYHOUND, nicht mehr ein generischer technischer Admin-Nutzer.">
+                          <PmTooltip position="right" text="Architektur-Notiz: Die JTL Cloud fungiert als Identity Provider (IDP). Die Beleg-Autoren sind nun die echten, implizit via SSO angelegten Nutzer in GREYHOUND.">
                             <span>Sascha Lammers</span>
                           </PmTooltip>
                         </span>
@@ -1052,18 +1036,19 @@
               {/* Zusatzhinweise / Callouts (ausgelagert unter die App) */}
               {(view === 'overview_active' || view === 'greyhound_app' || view === 'license_management') && (
                 <div className={`w-full mx-auto mt-16 pt-8 border-t border-gray-300 ${view === 'greyhound_app' ? 'max-w-[1400px]' : 'max-w-5xl'}`}>
-                  <h3 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-6">Architektur-Notizen & Zusatzhinweise für Screenshots</h3>
+                  <h3 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-6">Architektur-Notizen & Zusatzhinweise</h3>
                   
                   {view === 'overview_active' && (
                     <ArchCallout title="Sichtbarkeit, Zugriff & Implizite Benutzeranlage">
                       <p><strong>1. Sichtbarkeit vs. Zugriff (Lizenz-Prüfung):</strong> Das JTL-Archive ist als App für jeden Benutzer innerhalb der JTL-Organisation sichtbar. Der eigentliche Zugriff (Klick auf "JTL-Archive starten") öffnet direkt das JTL-Archive. Dort wird dann geprüft, ob noch eine Lizenz frei ist (diese Technik existiert bereits). Schlägt die Prüfung fehl, greift der definierte Fehler-Dialog ("Keine Lizenzen verfügbar").</p>
-                      <p className="mt-2"><strong>2. Implizite Benutzeranlage & SSO:</strong> Entgegen früherer Überlegungen wird <strong>kein</strong> pauschaler technischer "Admin"-Nutzer verwendet. Ziel ist ein echtes Single Sign-On: Klickt ein berechtigter User auf Starten, wird er automatisch als individueller GREYHOUND-Benutzer angemeldet. Der entsprechende Account wird dabei (sofern noch nicht vorhanden) implizit im Hintergrund angelegt und mit dem JTL Cloud-Benutzer gemappt.</p>
+                      <p className="mt-2"><strong>2. Implizite Benutzeranlage & SSO:</strong> Ziel ist ein echtes Single Sign-On: Klickt ein berechtigter User auf Starten, wird er automatisch als individueller GREYHOUND-Benutzer angemeldet. Der entsprechende Account wird dabei (sofern noch nicht vorhanden) implizit im Hintergrund angelegt und mit dem JTL Cloud-Benutzer gemappt.</p>
+                      <p className="mt-2"><strong>3. Wunschvorstellung (Named User):</strong> Idealerweise könnte jedem einzelnen Benutzer eine JTL-Archive Lizenz zugewiesen werden. Dazu müsste aber zuerst eine Möglichkeit in der JTL-Cloud geschaffen werden, entsprechende Lizenzen buchen zu können, und JTL-Archive müsste Named User als Lizenzsystem verwalten können, was derzeit nicht geht.</p>
                     </ArchCallout>
                   )}
 
                   {view === 'greyhound_app' && (
                     <ArchCallout title="Individuelle Beleg-Autoren via SSO">
-                      <p>Durch die direkte SSO-Anmeldung und das implizite Anlegen der Benutzer in GREYHOUND agiert jeder Mitarbeiter unter seiner eigenen Identität. Dokumente und Aktionen werden somit systemseitig direkt dem echten, eingeloggten Benutzer (hier im Beispiel "Sascha Lammers") als Bearbeiter/Autor zugeordnet. Ein Workaround über externe UserFields ist dafür nicht mehr zwingend notwendig.</p>
+                      <p>Durch die direkte SSO-Anmeldung und das implizite Anlegen der Benutzer in GREYHOUND agiert jeder Mitarbeiter unter seiner eigenen Identität. Dokumente und Aktionen werden somit systemseitig direkt dem echten, eingeloggten Benutzer (hier im Beispiel "Sascha Lammers") als Bearbeiter/Autor zugeordnet.</p>
                     </ArchCallout>
                   )}
 
