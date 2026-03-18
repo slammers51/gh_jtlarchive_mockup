@@ -66,6 +66,36 @@
         const Loader = (p) => <SVGIcon {...p}><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="4.93" x2="19.07" y2="7.76"/></SVGIcon>;
         const CreditCard = (p) => <SVGIcon {...p}><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></SVGIcon>;
 
+        // Tooltip Component for PM Notes
+        const PmTooltip = ({ children, text, position = 'bottom' }) => (
+          <div className="relative group inline-flex items-center cursor-help">
+            {/* The Highlight border just to show there's a note */}
+            <div className="relative border-b-2 border-dashed border-indigo-400 group-hover:border-indigo-600 transition-colors">
+                {children}
+            </div>
+            
+            <div className={`absolute z-[100] invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all bg-indigo-900 text-white text-xs p-4 rounded-lg shadow-xl w-80 pointer-events-none border border-indigo-700 ${
+              position === 'top' ? 'bottom-full mb-3 left-1/2 -translate-x-1/2' : 
+              position === 'left' ? 'right-full mr-3 top-1/2 -translate-y-1/2' :
+              position === 'right' ? 'left-full ml-3 top-1/2 -translate-y-1/2' :
+              'top-full mt-3 left-1/2 -translate-x-1/2'
+            }`}>
+              <div className="font-bold text-indigo-300 mb-2 flex items-center gap-1.5 uppercase tracking-widest text-[10px]">
+                <Info className="w-3.5 h-3.5"/> Architektur-Notiz
+              </div>
+              <div className="leading-relaxed">{text}</div>
+              
+              {/* Arrow */}
+              <div className={`absolute w-3 h-3 bg-indigo-900 border-indigo-700 transform rotate-45 ${
+                position === 'top' ? 'bottom-[-7px] left-1/2 -translate-x-1/2 border-r border-b' : 
+                position === 'left' ? 'right-[-7px] top-1/2 -translate-y-1/2 border-r border-t' :
+                position === 'right' ? 'left-[-7px] top-1/2 -translate-y-1/2 border-l border-b' :
+                'top-[-7px] left-1/2 -translate-x-1/2 border-l border-t'
+              }`}></div>
+            </div>
+          </div>
+        );
+
         // Ausgelagerte Komponente für statisch sichtbare Architektur-Callouts unterhalb der App
         const ArchCallout = ({ title, children }) => (
           <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-5 flex gap-4 items-start w-full shadow-sm">
@@ -231,13 +261,29 @@
                 </div>
                 <div className="col-span-3 flex justify-end items-center gap-3">
                   {isActive ? (
-                    <button 
-                      onClick={handleStartApp}
-                      className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-900 hover:bg-gray-50 shadow-sm transition-all whitespace-nowrap"
+                    <PmTooltip 
+                      position="left" 
+                      text={
+                        <div className="space-y-3 flex flex-col text-left">
+                          <div>
+                            <strong className="block mb-1 text-indigo-200 text-[11px]">1. Sichtbarkeit vs. Zugriff (Lizenz-Prüfung):</strong>
+                            Das JTL-Archive ist als App für jeden Benutzer innerhalb der JTL-Organisation sichtbar. Der eigentliche Zugriff (Klick auf "JTL-Archive starten") öffnet technisch bedingt direkt das JTL-Archive. Dort wird dann geprüft, ob noch eine Lizenz frei ist (diese Technik existiert bereits). Schlägt die Prüfung fehl, greift der definierte Fehler-Dialog ("Keine Lizenzen verfügbar").
+                          </div>
+                          <div>
+                            <strong className="block mb-1 text-indigo-200 text-[11px]">2. Implizite Benutzeranlage & SSO:</strong>
+                            Entgegen früherer Annahmen wird kein generischer "Admin"-Nutzer verwendet. Ziel ist ein echtes Single Sign-On: Der JTL Cloud-Benutzer wird beim Klick auf Starten implizit im GREYHOUND-System angelegt und direkt angemeldet, sofern eine Lizenz verfügbar ist.
+                          </div>
+                        </div>
+                      }
                     >
-                      <ExternalLink className="w-4 h-4 shrink-0" />
-                      JTL-Archive starten
-                    </button>
+                      <button 
+                        onClick={handleStartApp}
+                        className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-900 hover:bg-gray-50 shadow-sm transition-all whitespace-nowrap"
+                      >
+                        <ExternalLink className="w-4 h-4 shrink-0" />
+                        JTL-Archive starten
+                      </button>
+                    </PmTooltip>
                   ) : (
                     <button className="p-2 text-gray-400 hover:text-gray-600 shrink-0">
                       <MoreHorizontal className="w-5 h-5" />
@@ -670,7 +716,10 @@
                     <div className="bg-[#eaf3ff] border border-blue-300 rounded-lg p-3 shadow-sm relative">
                       <div className="flex justify-between items-start mb-1">
                         <span className="font-bold text-gray-900 text-xs">
-                          Admin
+                          {/* Tooltip für die individuelle Benutzeranlage */}
+                          <PmTooltip position="right" text="Architektur-Notiz: Die JTL Cloud fungiert als Identity Provider (IDP). Die Beleg-Autoren sind nun die echten, implizit via SSO angelegten Nutzer in GREYHOUND, nicht mehr ein generischer technischer Admin-Nutzer.">
+                            <span>Sascha Lammers</span>
+                          </PmTooltip>
                         </span>
                         <span className="text-gray-500 text-xs">vor 32 Minuten</span>
                       </div>
@@ -697,7 +746,7 @@
                     {/* Inactive Card 1 */}
                     <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm hover:border-gray-300 cursor-pointer">
                       <div className="flex justify-between items-start mb-1">
-                        <span className="font-bold text-gray-900 text-xs">Admin</span>
+                        <span className="font-bold text-gray-900 text-xs">Max Mustermann</span>
                         <span className="text-gray-500 text-xs">vor 32 Minuten</span>
                       </div>
                       <div className="flex items-start gap-2">
@@ -723,7 +772,7 @@
                     {/* Inactive Card 2 */}
                     <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm hover:border-gray-300 cursor-pointer">
                       <div className="flex justify-between items-start mb-1">
-                        <span className="font-bold text-gray-900 text-xs">Admin</span>
+                        <span className="font-bold text-gray-900 text-xs">Anna Schmidt</span>
                         <span className="text-gray-500 text-xs">15:05</span>
                       </div>
                       <div className="flex items-start gap-2">
@@ -761,7 +810,10 @@
                     </div>
                     <div>
                       <div className="font-bold text-gray-900 text-sm flex items-center gap-2">
-                        Admin
+                        {/* Zweiter Tooltip in der Kopfzeile */}
+                        <PmTooltip position="bottom" text="Nutzer sind nach dem Klick auf Starten direkt unter ihrer eigenen Identität eingeloggt (SSO via JTL IDP).">
+                          <span>Sascha Lammers</span>
+                        </PmTooltip>
                       </div>
                       <div className="text-gray-600 text-xs truncate max-w-xl">
                         RE202602121-17.02.2026 [T-898FF3F33C-91] <br/>
@@ -805,7 +857,7 @@
                           Fax: 02233/61414251<br/>
                           Web: http://www.sportbedarf-sommer.de<br/>
                           E-Mail: info@sportbedarf-sommer.de<br/><br/>
-                          Bearbeiter: Admin
+                          Bearbeiter: Sascha Lammers
                         </div>
                       </div>
 
@@ -933,9 +985,9 @@
                   <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 flex gap-4 items-start w-full">
                     <Info className="w-5 h-5 text-blue-600 mt-0.5 shrink-0" />
                     <div>
-                      <h4 className="font-bold text-blue-900 text-sm mb-1">Zentrale Benutzerverwaltung</h4>
+                      <h4 className="font-bold text-blue-900 text-sm mb-1">Zentrale Benutzerverwaltung (IDP)</h4>
                       <p className="text-sm text-blue-800 leading-relaxed">
-                        Die Verwaltung von Benutzern und deren Zugriffen erfolgt zentral über die JTL Cloud. An dieser Stelle behalten Sie lediglich den Überblick über Ihr gebuchtes Kontingent an JTL-Archive Lizenzen. Es werden keine GREYHOUND User angelegt oder über das Archiv lizenziert. JTL Cloud fungiert als Identity Provider (IDP). Die Prüfung erfolgt lediglich auf das vorhandene Kontingent beim Starten der App.
+                        Die eigentliche Verwaltung von Benutzern erfolgt zentral über die JTL Cloud. An dieser Stelle behalten Sie lediglich den Überblick über Ihr gebuchtes Kontingent an JTL-Archive Lizenzen. <strong>Hinweis zur Architektur:</strong> Es werden hier keine GREYHOUND User manuell angelegt. Die Anlage in GREYHOUND erfolgt implizit über das Single Sign-On (SSO), sobald ein befugter Nutzer die App startet und das Lizenz-Kontingent dies zulässt.
                       </p>
                     </div>
                   </div>
@@ -973,7 +1025,7 @@
                         <p className="text-sm text-gray-500 mt-4 leading-relaxed">
                           {customerEdition === 'enterprise' 
                             ? 'In Ihrem Tarif sind unbegrenzt viele Lizenzen für Ihre Organisation enthalten.' 
-                            : 'Sie haben derzeit 2 von 3 verfügbaren Lizenzen an Mitarbeiter in der JTL Cloud zugewiesen.'}
+                            : 'Aktuell können sich 2 von 3 lizenzierten Mitarbeitern simultan in GREYHOUND anmelden.'}
                         </p>
                       </div>
                     </div>
@@ -1003,21 +1055,21 @@
                   <h3 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-6">Architektur-Notizen & Zusatzhinweise für Screenshots</h3>
                   
                   {view === 'overview_active' && (
-                    <ArchCallout title="Sichtbarkeit vs. Zugriff & Technischer Nutzer">
-                      <p><strong>1. Sichtbarkeit vs. Zugriff (Lizenz-Prüfung):</strong> Das JTL-Archive ist als App für jeden Benutzer innerhalb der JTL-Organisation sichtbar. Der eigentliche Zugriff (Klick auf "JTL-Archive starten") öffnet technisch bedingt direkt das JTL-Archive. Dort wird dann geprüft, ob noch eine Lizenz frei ist (diese Technik existiert bereits). Schlägt die Prüfung fehl, greift der definierte Fehler-Dialog ("Keine Lizenzen verfügbar").</p>
-                      <p className="mt-2"><strong>2. Der technische "Admin"-Nutzer:</strong> GREYHOUND benötigt für die API-Kommunikation und die Dokumentenanlage einen technischen Kontext. Hierfür wird nicht für jeden JTL-User ein neuer GREYHOUND-User generiert. Stattdessen wird der bestehende, technische Admin-User (oder ein spezifischer System-User) für alle Anlage-Operationen genutzt.</p>
+                    <ArchCallout title="Sichtbarkeit, Zugriff & Implizite Benutzeranlage">
+                      <p><strong>1. Sichtbarkeit vs. Zugriff (Lizenz-Prüfung):</strong> Das JTL-Archive ist als App für jeden Benutzer innerhalb der JTL-Organisation sichtbar. Der eigentliche Zugriff (Klick auf "JTL-Archive starten") öffnet direkt das JTL-Archive. Dort wird dann geprüft, ob noch eine Lizenz frei ist (diese Technik existiert bereits). Schlägt die Prüfung fehl, greift der definierte Fehler-Dialog ("Keine Lizenzen verfügbar").</p>
+                      <p className="mt-2"><strong>2. Implizite Benutzeranlage & SSO:</strong> Entgegen früherer Überlegungen wird <strong>kein</strong> pauschaler technischer "Admin"-Nutzer verwendet. Ziel ist ein echtes Single Sign-On: Klickt ein berechtigter User auf Starten, wird er automatisch als individueller GREYHOUND-Benutzer angemeldet. Der entsprechende Account wird dabei (sofern noch nicht vorhanden) implizit im Hintergrund angelegt und mit dem JTL Cloud-Benutzer gemappt.</p>
                     </ArchCallout>
                   )}
 
                   {view === 'greyhound_app' && (
-                    <ArchCallout title="Beleg-Autoren & UserFields">
-                      <p>Für die technische Anlage der Belege im JTL-Archive (GREYHOUND) wird systemseitig der 'Admin'-Nutzer verwendet, um Overhead durch redundante User-Accounts zu vermeiden. Die fachliche Identität und Berechtigungssteuerung läuft allein über die JTL Cloud als Identity Provider (IDP). Die Information, wer den Beleg aus der Wawi erzeugt hat, steht für Audits und Filterung im 'UserField: Autor'.</p>
+                    <ArchCallout title="Individuelle Beleg-Autoren via SSO">
+                      <p>Durch die direkte SSO-Anmeldung und das implizite Anlegen der Benutzer in GREYHOUND agiert jeder Mitarbeiter unter seiner eigenen Identität. Dokumente und Aktionen werden somit systemseitig direkt dem echten, eingeloggten Benutzer (hier im Beispiel "Sascha Lammers") als Bearbeiter/Autor zugeordnet. Ein Workaround über externe UserFields ist dafür nicht mehr zwingend notwendig.</p>
                     </ArchCallout>
                   )}
 
                   {view === 'license_management' && (
                     <ArchCallout title="Anzeige der Lizenz-Kontingente (Zielbild)">
-                      <p>Laut Marc Völker und Robin-Manuel ist es derzeit technisch noch nicht möglich, die genaue Anzahl der gebuchten Lizenzen aus dem Kundencenter (KC) in die JTL-Cloud durchzureichen und hier in der App anzuzeigen. Die obige Darstellung dient daher als Mockup für den gewünschten Zielzustand.</p>
+                      <p>Laut Marc Völker und Robin-Manuel ist es derzeit technisch noch nicht möglich, die genaue Anzahl der gebuchten Lizenzen aus dem Kundencenter (KC) in die JTL-Cloud durchzureichen und hier in der App anzuzeigen. Die obige Darstellung der "Belegten Lizenzen" dient daher als Mockup für den gewünschten Zielzustand.</p>
                     </ArchCallout>
                   )}
                 </div>
